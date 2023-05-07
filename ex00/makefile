@@ -14,10 +14,10 @@ INCLUDES_PATH = -I ./
 all:  $(NAME)
 
 %.o: %.cpp $(HEADERS)
-	c++ $(CPPFLAGS) $(INCLUDES_PATH) -o $@ -c $<
+	c++ $(INCLUDES_PATH) -o $@ -c $<
 
 $(NAME): $(OBJ)
-	c++  -o $(NAME) $^
+	c++ $(CPPFLAGS) -o $(NAME) $^
 
 clean:
 	rm -f $(OBJ)

@@ -7,10 +7,9 @@ int main(int ac, char *av[])
 
 	if (ac != 2)
 	{
-		std::cout << "Error!" << std::endl;
+		std::cerr << "usage: " << av[0] << " input.csv" << std::endl;
 		return (1);
 	}
-	bitcoin.printFile(av[1]);
-	// std::cout << "hello bitcoin" << std::endl;
+	bitcoin.getExchangeRate(av[1]);
 	return (0);
 }
