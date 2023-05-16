@@ -9,6 +9,8 @@ private:
 	std::stack<int> stack;
 	void parseNumber(const char *str);
 	void printStack();
+	bool isoperation(char c);
+	void calcule(char c);
 
 public:
 	RPN();

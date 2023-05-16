@@ -32,7 +32,15 @@ void RPN::executeRPN(const std::string &expression)
 			this->parseNumber(str + i);
 			i++;
 		}
-
+		if (this->isoperation(str[i]))
+		{
+			if (this->stack.size() < 2)
+				throw("error");
+			else
+			{
+				this->calcule(str[i]);
+			}
+		}
 		if (str[i] != '\0')
 			i++;
 	}
@@ -62,6 +70,8 @@ void RPN::parseNumber(const char *str)
 		throw "invalid number";
 	if (endPtr == NULL || *endPtr == '\0' || *endPtr != ' ')
 		throw "invalid number";
+	if (std::isdigit(*endPtr))
+		throw "number > 10";
 	std::cout << "num: " << number << std::endl;
 	this->stack.push(number);
 }
@@ -72,6 +82,65 @@ void RPN::printStack()
 	{
 		std::cout << "[ " << this->stack.top() << " ]" << std::endl;
 		this->stack.pop();
+	}
+}
+
+bool RPN::isoperation(char c)
+{
+
+	if (c == '+' || c == '-' || c == '/' || c == '*' || c == '%' || c == '=' || c == '^')
+		return true;
+	return false;
+}
+
+void RPN::calcule(char c)
+{
+	int val1;
+	int val2;
+
+	switch (c)
+	{
+	case '+':
+		val1 = this->stack.top();
+		this->stack.pop();
+		val2 = this->stack.top();
+		this->stack.pop();
+		printf("result [%d] \n", val1 + val2);
+		this->stack.push(val1 + val2);
+		break;
+
+	case '-':
+		val1 = this->stack.top();
+		this->stack.pop();
+		val2 = this->stack.top();
+		this->stack.pop();
+		printf("[%d]", val2 - val1);
+		this->stack.push(val2 - val1);
+		break;
+
+	case '*':
+		val1 = this->stack.top();
+		this->stack.pop();
+		val2 = this->stack.top();
+		this->stack.pop();
+		printf("result : [%d] \n", val1 * val2);
+		this->stack.push(val1 * val2);
+		break;
+
+	case '/':
+		val1 = this->stack.top();
+		this->stack.pop();
+		val2 = this->stack.top();
+		this->stack.pop();
+		if (val1 == 0)
+			return;
+		printf("[%d]", val2 / val1);
+		this->stack.push(val2 / val1);
+		break;
+
+	// operator doesn't match any case constant +, -, *, /
+	default:
+		printf("Error! operator is not correct");
 	}
 }
 
