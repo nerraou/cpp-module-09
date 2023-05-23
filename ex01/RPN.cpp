@@ -47,7 +47,7 @@ void RPN::executeRPN(const std::string &expression)
 				i++;
 		}
 		if (this->stack.size() != 1)
-			throw(RPN::Errors("Error: stack size != 1"));
+			throw(RPN::Errors("Error: "));
 
 		this->printStack();
 	}
@@ -68,8 +68,6 @@ void RPN::parseNumber(const char *str)
 		throw(RPN::Errors("Error: number >= 10"));
 	if (endPtr == NULL || *endPtr == '\0' || *endPtr != ' ')
 		throw(RPN::Errors("Error: invalid number"));
-	if (std::isdigit(*endPtr))
-		throw(RPN::Errors("Error: invalid number"));
 	this->stack.push(number);
 }
 
@@ -77,7 +75,7 @@ void RPN::printStack()
 {
 	while (!this->stack.empty())
 	{
-		std::cout << "[ " << this->stack.top() << " ]" << std::endl;
+		std::cout << this->stack.top() << std::endl;
 		this->stack.pop();
 	}
 }
