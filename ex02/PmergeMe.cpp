@@ -8,6 +8,14 @@ void print(std::vector<std::pair<int, int> > const &a)
 		std::cout << a.at(i).first << ", " << a.at(i).second << std::endl;
 }
 
+void printDeque(std::deque<int>  const &a)
+{
+	std::cout << "The deque elements are : " << std::endl;
+
+	for (unsigned int i = 0; i < a.size(); i++)
+		std::cout << a.at(i) << std::endl;
+}
+
 void PmergeMe::getIntegerSequence(char *av[])
 {
 	int i;
@@ -38,30 +46,22 @@ void PmergeMe::createVectorPairs()
 		size--;
 	}
 	this->sortVectorPairs();
-	// std::vector<std::pair<int, int> > one;
 
-	// one.push_back(std::make_pair(7, 1));
-	// one.push_back(std::make_pair(9, 1));
-	// one.push_back(std::make_pair(8, 1));
-	// one.push_back(std::make_pair(10, 1));
-
-	// one.push_back(std::make_pair(3, 1));
-	// one.push_back(std::make_pair(6, 1));
-	// one.push_back(std::make_pair(9, 1));
-
-	// int mid =  0 + (one.size() - 0) / 2;
-	// std::cerr << "mid: "<<  mid << std::endl;
-
-	// this->merge(one, 0, mid, one.size());
-	// print(one);
-
-	std::cout << "before\n";
-	print(this->vec_pair);
+	// print(this->vec_pair);
 
 	this->mergeSort(this->vec_pair, 0, this->vec_pair.size() - 1);
+	this->createMainChainAndPend();
+	std::cout << "Main chain" << std::endl;
+	printDeque(this->main_chain);
+	std::cout << "Pend" << std::endl;
+	printDeque(this->pend);
+	int new_pos = this->binarySearch(this->main_chain, 3, 0, this->main_chain.size() - 1);
+	std::cout << "new position: " << new_pos << std::endl;
+	this->main_chain.insert(this->main_chain.begin() + new_pos, 3);
 
-	std::cout << "after\n";
-	print(this->vec_pair);
+	std::cout  << "--------------------------------------After\n";
+	std::cout << "Main chain" << std::endl;
+	printDeque(this->main_chain);
 }
 
 void PmergeMe::sortVectorPairs()
@@ -83,16 +83,41 @@ void PmergeMe::sortVectorPairs()
 	
 }
 
-void PmergeMe::createMainChainPend()
+void PmergeMe::createMainChainAndPend()
 {
-	unsigned int i;
+	size_t i;
 
-	i = 0;
-	this->vec_deque.at(0).push_back(this->vec_pair.at(0).second);
+	main_chain.push_back(this->vec_pair.at(0).second);
+	main_chain.push_back(this->vec_pair.at(0).first);
+	i = 1;
 	while (i < this->vec_pair.size())
 	{
+		main_chain.push_back(this->vec_pair.at(i).first);
+		pend.push_back(this->vec_pair.at(i).second);
+		i++;
 	}
-	
+}
+
+int PmergeMe::binarySearch(std::deque<int> array, int target, int begin, int end)
+{
+	int mid;
+
+	while (begin <= end)
+	{
+		mid = begin + (end - begin) / 2;
+		if (target == array.at(mid))
+			return (mid);
+
+		if (target > array.at(mid))
+			begin = mid + 1;
+		else
+			end = mid - 1;
+		
+	}
+	if (target > array.at(mid))
+		return (mid + 1);
+	else
+		return (mid);
 }
 
 void PmergeMe::sortPairVector()
@@ -124,28 +149,13 @@ void PmergeMe::merge(std::vector<std::pair<int, int> > &array, int begin, int mi
 	size_t rightArrayIndex;
 	size_t mergedArrayIndex;
 
-	std::vector<std::pair<int, int> > leftArray(array.begin() + begin, array.begin() + mid);
-	std::vector<std::pair<int, int> > rightArray(array.begin() + mid, array.begin() + end + 1);
+	std::vector<std::pair<int, int> > leftArray(array.begin() + begin, array.begin() + mid + 1);
+	std::vector<std::pair<int, int> > rightArray(array.begin() + mid + 1, array.begin() + end + 1);
 
 	leftArrayIndex = 0;
 	rightArrayIndex = 0;
 	mergedArrayIndex = begin;
 
-	///
-	
-	std::cerr << "---------------------" << std::endl;
-	std::cerr << "left array" << std::endl;
-	print(leftArray);
-	std::cout << "left size [ " <<  leftArray.size() << " ] " << std::endl;
-
-	std::cerr << "---------------------" << std::endl;
-
-	std::cerr << "right array" << std::endl;
-	print(rightArray);
-	std::cout << "right size [ " <<  rightArray.size()  <<" ]" << std::endl;
-	std::cerr << "---------------------" << std::endl;
-
-	///
 
 	while (leftArrayIndex < leftArray.size() && rightArrayIndex < rightArray.size())
 	{
@@ -182,8 +192,8 @@ void PmergeMe::mergeSort(std::vector<std::pair<int, int> > &array, int begin, in
 	if (begin >= end)
 		return ;
 	mid =  begin + (end - begin) / 2;	
-	// this->mergeSort(array, begin, mid);
-	// this->mergeSort(array, mid + 1, end);
+	this->mergeSort(array, begin, mid);
+	this->mergeSort(array, mid + 1, end);
 	this->merge(array, begin, mid, end);
 }
 

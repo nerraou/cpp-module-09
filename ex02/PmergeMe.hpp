@@ -6,23 +6,29 @@
 class PmergeMe
 {
 private:
-	std::vector<std::pair<int, int> > vec_pair;
-	std::vector<std::deque<int> > vec_deque;
 	std::vector<int> vec;
+	std::vector<std::pair<int, int> > vec_pair;
+	std::deque<int>  main_chain;
+	std::deque<int>  pend;
 
 
 	// create pair
 	void createVectorPairs();
 	//sort pairs
 	void sortVectorPairs();
-	//create main chain and pend;
-	void createMainChainPend();
 	//sort pairs
 	void sortPairVector();
 	//merge sort
 	void merge(std::vector<std::pair<int, int> > &array, int begin, int mid, int end);
 	//merge left and right
 	void mergeSort(std::vector<std::pair<int, int> > &array, int begin, int end);
+	//create main chain and pend;
+	void createMainChainAndPend();
+	// binary search
+	int binarySearch(std::deque<int> array,int target, int begin, int end);
+	//binary insertin sort
+	void binaryInsertionSort(int target);
+	
 
 public:
 	PmergeMe();
