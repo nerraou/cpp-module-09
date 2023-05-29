@@ -3,13 +3,16 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <stack>
+#include <set>
 class PmergeMe
 {
 private:
 	std::vector<int> vec;
 	std::vector<std::pair<int, int> > vec_pair;
-	std::deque<int>  main_chain;
-	std::deque<int>  pend;
+	std::deque<int>	main_chain;
+	std::deque<int>	pend;
+	std::deque<int>	jacobSequence;
 
 
 	// create pair
@@ -28,7 +31,12 @@ private:
 	int binarySearch(std::deque<int> array,int target, int begin, int end);
 	//binary insertin sort
 	void binaryInsertionSort(int target);
-	
+	//generate jacob_insertion_sequence
+	void generateJacobInsertionSequence();
+	//jacobsthal index
+	int jacobsthal(int n);
+	//insert to main chain
+	void insertTomainChain();
 
 public:
 	PmergeMe();

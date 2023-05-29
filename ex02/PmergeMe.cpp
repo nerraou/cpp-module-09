@@ -51,17 +51,11 @@ void PmergeMe::createVectorPairs()
 
 	this->mergeSort(this->vec_pair, 0, this->vec_pair.size() - 1);
 	this->createMainChainAndPend();
-	std::cout << "Main chain" << std::endl;
-	printDeque(this->main_chain);
-	std::cout << "Pend" << std::endl;
-	printDeque(this->pend);
-	int new_pos = this->binarySearch(this->main_chain, 3, 0, this->main_chain.size() - 1);
-	std::cout << "new position: " << new_pos << std::endl;
-	this->main_chain.insert(this->main_chain.begin() + new_pos, 3);
 
-	std::cout  << "--------------------------------------After\n";
-	std::cout << "Main chain" << std::endl;
-	printDeque(this->main_chain);
+	this->generateJacobInsertionSequence();
+	
+	std::cout << "Jacob sequence" << std::endl;
+	this->insertTomainChain();
 }
 
 void PmergeMe::sortVectorPairs()
@@ -195,6 +189,86 @@ void PmergeMe::mergeSort(std::vector<std::pair<int, int> > &array, int begin, in
 	this->mergeSort(array, begin, mid);
 	this->mergeSort(array, mid + 1, end);
 	this->merge(array, begin, mid, end);
+}
+
+void PmergeMe::generateJacobInsertionSequence()
+{
+	size_t size; 
+	size_t jcobstalIndex;
+	int index;
+
+	size = this->pend.size();
+	index = 3;
+
+	while ((jcobstalIndex = this->jacobsthal(index)) < size - 1)
+	{
+		this->jacobSequence.push_back(jcobstalIndex);
+		index++;
+	}
+}
+
+int PmergeMe::jacobsthal(int n)
+{
+	if (n == 0)
+		return (0);
+	if (n == 1)
+		return (1);
+	return (jacobsthal(n - 1) + 2 * jacobsthal(n - 2));
+}
+
+void printSet(std::set<int>  const &myset)
+{
+	 std::set<int>::iterator i = myset.begin();  
+  while (i != myset.end())  
+  {
+  	std::cout << *i - 1 << " ";  
+ 	std::cout << std::endl;  
+	i++;
+
+  }
+}
+
+void PmergeMe::insertTomainChain()
+{
+	std::set<int> indexSequnce;
+	std::vector<int> vec;
+	std::string flag;
+	int jacobIndex;
+	size_t i;
+	int item;
+
+	jacobIndex = 3;
+	i = 0;
+	flag = "non";
+
+	while (i <=  this->pend.size())
+	{
+		if (this->jacobSequence.size() != 0 && flag != "jacob")
+		{
+			
+			indexSequnce.insert(this->jacobSequence.front());
+			vec.push_back(this->jacobSequence.front());
+			item = this->pend.at(this->jacobSequence.front() - 1);
+			this->jacobSequence.pop_front();
+			flag = "jacob";
+		}
+		else
+		{
+			if (indexSequnce.count(i))
+			{
+				
+				i++;
+			}
+			
+			indexSequnce.insert(i);
+			vec.push_back(i);
+			item = this->pend.at(i - 1);
+			flag = "not-jacob";
+		}
+		i++;
+	}
+	printSet(indexSequnce);
+	
 }
 
 PmergeMe::PmergeMe(/* args */)
