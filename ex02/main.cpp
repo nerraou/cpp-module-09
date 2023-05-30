@@ -5,7 +5,7 @@ int main(int ac, char *av[])
 	(void)ac;
 	PmergeMe pm;
 
-	pm.getIntegerSequence(av);
+	pm.applyMergeInsertSort(av);
 
 	return 0;
 }

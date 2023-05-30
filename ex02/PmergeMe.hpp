@@ -9,18 +9,19 @@ class PmergeMe
 {
 private:
 	std::vector<int> vec;
-	std::vector<std::pair<int, int> > vec_pair;
-	std::deque<int>	main_chain;
+	std::vector<int> positions;
+	std::vector<std::pair<int, int> > vecPair;
+	std::deque<int>	mainChain;
 	std::deque<int>	pend;
 	std::deque<int>	jacobSequence;
 
 
+
+	void getIntegerSequence(char *av[]);
 	// create pair
 	void createVectorPairs();
 	//sort pairs
 	void sortVectorPairs();
-	//sort pairs
-	void sortPairVector();
 	//merge sort
 	void merge(std::vector<std::pair<int, int> > &array, int begin, int mid, int end);
 	//merge left and right
@@ -35,12 +36,19 @@ private:
 	void generateJacobInsertionSequence();
 	//jacobsthal index
 	int jacobsthal(int n);
+	//generate positions
+	void generatPositions();
+
 	//insert to main chain
-	void insertTomainChain();
+	void insertToMainChain();
+
+
 
 public:
 	PmergeMe();
-	void getIntegerSequence(char *av[]);
+
+	//main function
+	void applyMergeInsertSort(char *av[]);
 
 	PmergeMe(PmergeMe const &other);
 

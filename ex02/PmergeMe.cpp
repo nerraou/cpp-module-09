@@ -10,7 +10,6 @@ void print(std::vector<std::pair<int, int> > const &a)
 
 void printDeque(std::deque<int>  const &a)
 {
-	std::cout << "The deque elements are : " << std::endl;
 
 	for (unsigned int i = 0; i < a.size(); i++)
 		std::cout << a.at(i) << std::endl;
@@ -22,15 +21,17 @@ void PmergeMe::getIntegerSequence(char *av[])
 	char *ptr;
 
 	i = 1;
+	int val;
 	while (av[i])
 	{
-		this->vec.push_back(std::strtol(av[i], &ptr, 10));
-		if (*ptr != '\0')
+		val = std::strtol(av[i], &ptr, 10);
+		if (*ptr != '\0' ||  val < 0)
 			std::cout << "Error" << std::endl;
+		this->vec.push_back(val);
 		i++;
 	}
-	this->createVectorPairs();
 }
+
 
 void PmergeMe::createVectorPairs()
 {
@@ -41,22 +42,13 @@ void PmergeMe::createVectorPairs()
 	size = this->vec.size() / 2;
 	while (size != 0)
 	{
-		this->vec_pair.push_back(std::make_pair(this->vec.at(i), this->vec.at(i + 1)));
+		this->vecPair.push_back(std::make_pair(this->vec.at(i), this->vec.at(i + 1)));
 		i += 2;
 		size--;
 	}
-	this->sortVectorPairs();
-
-	// print(this->vec_pair);
-
-	this->mergeSort(this->vec_pair, 0, this->vec_pair.size() - 1);
-	this->createMainChainAndPend();
-
-	this->generateJacobInsertionSequence();
-	
-	std::cout << "Jacob sequence" << std::endl;
-	this->insertTomainChain();
 }
+
+
 
 void PmergeMe::sortVectorPairs()
 {
@@ -64,13 +56,13 @@ void PmergeMe::sortVectorPairs()
 	int tmp;
 
 	i = 0;
-	while (i < this->vec_pair.size())
+	while (i < this->vecPair.size())
 	{
-		if (this->vec_pair.at(i).first < this->vec_pair.at(i).second)
+		if (this->vecPair.at(i).first < this->vecPair.at(i).second)
 		{
-			tmp = this->vec_pair.at(i).first;
-			this->vec_pair.at(i).first = this->vec_pair.at(i).second;
-			this->vec_pair.at(i).second = tmp;
+			tmp = this->vecPair.at(i).first;
+			this->vecPair.at(i).first = this->vecPair.at(i).second;
+			this->vecPair.at(i).second = tmp;
 		}
 		i++;
 	}
@@ -81,13 +73,14 @@ void PmergeMe::createMainChainAndPend()
 {
 	size_t i;
 
-	main_chain.push_back(this->vec_pair.at(0).second);
-	main_chain.push_back(this->vec_pair.at(0).first);
+	mainChain.push_back(this->vecPair.at(0).second);
+	mainChain.push_back(this->vecPair.at(0).first);
 	i = 1;
-	while (i < this->vec_pair.size())
+
+	while (i < this->vecPair.size())
 	{
-		main_chain.push_back(this->vec_pair.at(i).first);
-		pend.push_back(this->vec_pair.at(i).second);
+		mainChain.push_back(this->vecPair.at(i).first);
+		pend.push_back(this->vecPair.at(i).second);
 		i++;
 	}
 }
@@ -114,27 +107,13 @@ int PmergeMe::binarySearch(std::deque<int> array, int target, int begin, int end
 		return (mid);
 }
 
-void PmergeMe::sortPairVector()
+void PmergeMe::binaryInsertionSort(int target)
 {
-	unsigned int i;
-	unsigned int j;
-	unsigned int size;
-	int tmp;
+	int pos;
 
-	size = this->vec_pair.size();
-	for (i = 0; i < size - 1; i++)
-	{
-		for (j = 0; j < size - i - 1; j++)
-		{
-			if (this->vec_pair.at(j).first < this->vec_pair.at(j + 1).first)
-			{
-				tmp = this->vec_pair.at(j).first;
-				this->vec_pair.at(j).first = this->vec_pair.at(j + 1).second;
-				this->vec_pair.at(j + 1).second = tmp;
-			}
-		}
-		
-	}
+	pos = this->binarySearch(this->mainChain, target, 0, this->mainChain.size() - 1);
+	this->mainChain.insert(this->mainChain.begin() + pos, target);
+	
 }
 
 void PmergeMe::merge(std::vector<std::pair<int, int> > &array, int begin, int mid, int end)
@@ -216,6 +195,37 @@ int PmergeMe::jacobsthal(int n)
 	return (jacobsthal(n - 1) + 2 * jacobsthal(n - 2));
 }
 
+void PmergeMe::generatPositions()
+{
+	size_t val;
+	size_t pos;
+	size_t lastPos;
+
+	if (this->pend.empty())
+		return;
+	this->generateJacobInsertionSequence();
+	lastPos = 0;
+	val = 0;
+	while (!this->jacobSequence.empty())
+	{
+		val  = this->jacobSequence.front();
+		
+		this->jacobSequence.pop_front();
+		this->positions.push_back(val);
+		
+		pos = val - 1;
+		while (pos > lastPos)
+		{
+			this->positions.push_back(pos);
+			pos--;
+		}
+		lastPos = val;
+	}
+	while (val++ < this->pend.size())
+		this->positions.push_back(val);
+
+}
+
 void printSet(std::set<int>  const &myset)
 {
 	 std::set<int>::iterator i = myset.begin();  
@@ -228,50 +238,40 @@ void printSet(std::set<int>  const &myset)
   }
 }
 
-void PmergeMe::insertTomainChain()
+void PmergeMe::insertToMainChain()
 {
-	std::set<int> indexSequnce;
-	std::vector<int> vec;
-	std::string flag;
-	int jacobIndex;
-	size_t i;
+	std::vector<int>::iterator it;
 	int item;
+	int target;
+	int pos;
 
-	jacobIndex = 3;
-	i = 0;
-	flag = "non";
+	this->generatPositions();
 
-	while (i <=  this->pend.size())
+	for (it = this->positions.begin(); it < this->positions.end(); it++)
 	{
-		if (this->jacobSequence.size() != 0 && flag != "jacob")
-		{
-			
-			indexSequnce.insert(this->jacobSequence.front());
-			vec.push_back(this->jacobSequence.front());
-			item = this->pend.at(this->jacobSequence.front() - 1);
-			this->jacobSequence.pop_front();
-			flag = "jacob";
-		}
-		else
-		{
-			if (indexSequnce.count(i))
-			{
-				
-				i++;
-			}
-			
-			indexSequnce.insert(i);
-			vec.push_back(i);
-			item = this->pend.at(i - 1);
-			flag = "not-jacob";
-		}
-		i++;
+		item = this->pend.at(*it - 1);
+		this->binaryInsertionSort(item);
 	}
-	printSet(indexSequnce);
-	
+	if (this->vec.size() % 2 != 0)
+	{
+		target = this->vec.at(this->vec.size() - 1);
+		pos = this->binarySearch(this->mainChain, target, 0, this->mainChain.size() - 1);
+		this->mainChain.insert(this->mainChain.begin() + pos, target);
+	}
 }
 
-PmergeMe::PmergeMe(/* args */)
+void PmergeMe::applyMergeInsertSort(char *av[])
+{
+	this->getIntegerSequence(av);
+	this->createVectorPairs();
+	this->sortVectorPairs();
+	this->mergeSort(this->vecPair, 0, this->vecPair.size() - 1);
+	this->createMainChainAndPend();
+	this->insertToMainChain();
+	printDeque(this->mainChain);
+}
+
+PmergeMe::PmergeMe()
 {
 }
 
@@ -283,7 +283,7 @@ PmergeMe::PmergeMe(PmergeMe const &other)
 PmergeMe &PmergeMe::operator=(PmergeMe const &other)
 {
 	this->vec = other.vec;
-	this->vec_pair = other.vec_pair;
+	this->vecPair = other.vecPair;
 	return (*this);
 }
 
