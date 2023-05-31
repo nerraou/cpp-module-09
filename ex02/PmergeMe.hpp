@@ -5,6 +5,8 @@
 #include <deque>
 #include <stack>
 #include <set>
+
+#include <exception>
 class PmergeMe
 {
 private:
@@ -12,7 +14,7 @@ private:
 	std::vector<int> positions;
 	std::vector<std::pair<int, int> > vecPair;
 	std::deque<int>	mainChain;
-	std::deque<int>	pend;
+	std::vector<int>	pend;
 	std::deque<int>	jacobSequence;
 
 
@@ -55,4 +57,9 @@ public:
 	PmergeMe &operator=(PmergeMe const &other);
 
 	~PmergeMe();
+
+	class exception :public std::exception
+	{
+
+	};
 };

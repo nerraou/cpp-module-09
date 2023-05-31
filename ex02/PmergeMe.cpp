@@ -24,6 +24,7 @@ void PmergeMe::getIntegerSequence(char *av[])
 	int val;
 	while (av[i])
 	{
+		
 		val = std::strtol(av[i], &ptr, 10);
 		if (*ptr != '\0' ||  val < 0)
 			std::cout << "Error" << std::endl;
@@ -74,9 +75,8 @@ void PmergeMe::createMainChainAndPend()
 	size_t i;
 
 	mainChain.push_back(this->vecPair.at(0).second);
-	mainChain.push_back(this->vecPair.at(0).first);
-	i = 1;
-
+	
+	i = 0;
 	while (i < this->vecPair.size())
 	{
 		mainChain.push_back(this->vecPair.at(i).first);
@@ -204,8 +204,8 @@ void PmergeMe::generatPositions()
 	if (this->pend.empty())
 		return;
 	this->generateJacobInsertionSequence();
-	lastPos = 0;
-	val = 0;
+	lastPos = 1;
+	val = 1;
 	while (!this->jacobSequence.empty())
 	{
 		val  = this->jacobSequence.front();
@@ -228,29 +228,34 @@ void PmergeMe::generatPositions()
 
 void printSet(std::set<int>  const &myset)
 {
-	 std::set<int>::iterator i = myset.begin();  
-  while (i != myset.end())  
-  {
-  	std::cout << *i - 1 << " ";  
- 	std::cout << std::endl;  
-	i++;
-
-  }
+	std::set<int>::iterator i = myset.begin();  
+	while (i != myset.end())  
+	{
+		std::cout << *i - 1 << " ";  
+		std::cout << std::endl;  
+		i++;
+	}
 }
 
 void PmergeMe::insertToMainChain()
 {
 	std::vector<int>::iterator it;
-	int item;
 	int target;
-	int pos;
+	size_t endPos;
+	size_t addedCount;
+	size_t pos;
 
 	this->generatPositions();
+	addedCount = 0;
 
 	for (it = this->positions.begin(); it < this->positions.end(); it++)
 	{
-		item = this->pend.at(*it - 1);
-		this->binaryInsertionSort(item);
+		target = this->pend.at(*it - 1);
+
+		endPos = *it + addedCount;
+		pos = this->binarySearch(this->mainChain, target, 0, endPos);
+		this->mainChain.insert(this->mainChain.begin() + pos, target);
+		addedCount++;
 	}
 	if (this->vec.size() % 2 != 0)
 	{
@@ -263,12 +268,25 @@ void PmergeMe::insertToMainChain()
 void PmergeMe::applyMergeInsertSort(char *av[])
 {
 	this->getIntegerSequence(av);
+	//check for vec size if it's one print it;
+	
 	this->createVectorPairs();
 	this->sortVectorPairs();
 	this->mergeSort(this->vecPair, 0, this->vecPair.size() - 1);
 	this->createMainChainAndPend();
 	this->insertToMainChain();
-	printDeque(this->mainChain);
+	// printDeque(this->mainChain);
+	std::sort(this->vec.begin(), this->vec.end());
+	for (size_t i = 0; i < this->vec.size(); i++)
+	{
+		if (this->vec[i] != this->mainChain.at(i))
+			{
+				std::cout << this->vec[i] << " - " << this->mainChain.at(i) << std::endl;
+				std::cout << "Not sorted\n";
+				return;
+			}
+	}
+	std::cout << "sorted\n";
 }
 
 PmergeMe::PmergeMe()
