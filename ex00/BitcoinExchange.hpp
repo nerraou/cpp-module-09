@@ -48,6 +48,7 @@ public:
 	{
 	protected:
 		std::string date;
+		std::string message;
 
 	public:
 		BadDateFormat(std::string &date);

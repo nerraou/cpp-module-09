@@ -6,7 +6,7 @@ void BitcoinExchange::parseCSVFile(const std::string &path)
 	std::string line;
 	std::size_t pos;
 
-	if (data.is_open())
+	if (data.is_open() && data.good())
 	{
 		getline(data, line);
 		while (getline(data, line))
@@ -15,6 +15,8 @@ void BitcoinExchange::parseCSVFile(const std::string &path)
 			this->map.insert(std::pair<std::string, std::string>(line.substr(0, pos), line.substr(pos + 1)));
 		}
 	}
+	else
+		throw std::runtime_error("can not open file!");
 }
 
 void BitcoinExchange::parseInputFile(const std::string &path)
@@ -25,17 +27,20 @@ void BitcoinExchange::parseInputFile(const std::string &path)
 	float price;
 	float exchangeRate;
 
+	if (!data.is_open() || !data.good())
+		throw std::runtime_error("can not open file!");
+
 	getline(data, line);
 	while (getline(data, line))
 	{
 		pos = line.find(" | ");
 		std::string date = line.substr(0, pos);
-		const char *priceString = line.substr(pos + 3).c_str();
+		std::string priceString = line.substr(pos + 3);
 
 		try
 		{
 			this->parseDate(date);
-			this->parsePrice(priceString, &price);
+			this->parsePrice(priceString.c_str(), &price);
 			std::map<std::string, std::string>::iterator it = map.lower_bound(date);
 			if (it != map.begin())
 			{
@@ -120,6 +125,7 @@ const char *BitcoinExchange::NotPositive::what() const throw()
 BitcoinExchange::BadDateFormat::BadDateFormat(std::string &date)
 {
 	this->date = date;
+	this->message = "Error: bad input => " + this->date;
 }
 
 BitcoinExchange::BadDateFormat::~BadDateFormat() throw()
@@ -128,9 +134,7 @@ BitcoinExchange::BadDateFormat::~BadDateFormat() throw()
 
 const char *BitcoinExchange::BadDateFormat::what() const throw()
 {
-
-	const std::string message = "Error: bad input => " + this->date;
-	return (message.c_str());
+	return (this->message.c_str());
 }
 
 BitcoinExchange::PriceTooHigh::PriceTooHigh()
