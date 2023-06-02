@@ -1,20 +1,5 @@
 #include "PmergeMe.hpp"
 
-void print(std::vector<std::pair<int, int> > const &a)
-{
-	std::cout << "The vector elements are : " << std::endl;
-
-	for (unsigned int i = 0; i < a.size(); i++)
-		std::cout << a.at(i).first << ", " << a.at(i).second << std::endl;
-}
-
-void printDeque(std::deque<int>  const &a)
-{
-
-	for (unsigned int i = 0; i < a.size(); i++)
-		std::cout << a.at(i) << std::endl;
-}
-
 
 
 PmergeMe::PmergeMe()
@@ -63,7 +48,7 @@ void PmergeMe::PmergeVector::getIntegerSequence(char *av[])
 
 		val = std::strtol(av[i], &ptr, 10);
 
-		if (*ptr != '\0' ||  val < 0)
+		if (*ptr != '\0' || val < 0)
 			throw (PmergeMe::exception());
 
 		this->vec.push_back(val);
@@ -290,19 +275,11 @@ PmergeMe::PmergeVector::~PmergeVector()
 
 void PmergeMe::PmergeVector::applyMergeInsertSort(char *av[])
 {
-	try
-	{
-		this->getIntegerSequence(av);	
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	//check for vec size if it's one print it;
+	this->getIntegerSequence(av);
+
 	if (this->vec.size() == 1)
 	{
-		// insert into the main chain
+		this->mainChain.push_back(this->vec.at(0));
 	}
 	else
 	{
@@ -311,19 +288,19 @@ void PmergeMe::PmergeVector::applyMergeInsertSort(char *av[])
 		this->mergeSort(this->vecPair, 0, this->vecPair.size() - 1);
 		this->createMainChainAndPend();
 		this->insertToMainChain();
-		// printDeque(this->mainChain);
-		std::sort(this->vec.begin(), this->vec.end());
 	}
-	for (size_t i = 0; i < this->vec.size(); i++)
-	{
-		if (this->vec[i] != this->mainChain.at(i))
-			{
-				std::cout << this->vec[i] << " - " << this->mainChain.at(i) << std::endl;
-				std::cout << "Not sorted\n";
-				return;
-			}
-	}
-	std::cout << "sorted\n";
+}
+
+void PmergeMe::PmergeVector::printBefore()
+{
+	for (unsigned int i = 0; i < this->vec.size(); i++)
+		std::cout << this->vec.at(i) << " ";
+}
+
+void PmergeMe::PmergeVector::printAfter()
+{
+	for (unsigned int i = 0; i < mainChain.size(); i++)
+		std::cout << this->mainChain.at(i) << " ";
 }
 
 void PmergeMe::PmergeDeque::getIntegerSequence(char *av[])
@@ -340,7 +317,7 @@ void PmergeMe::PmergeDeque::getIntegerSequence(char *av[])
 
 		val = std::strtol(av[i], &ptr, 10);
 
-		if (*ptr != '\0' ||  val < 0)
+		if (*ptr != '\0' || val < 0)
 			throw (PmergeMe::exception());
 
 		this->deque.push_back(val);
@@ -464,7 +441,6 @@ int PmergeMe::PmergeDeque::binarySearch(std::deque<int> array, int target, int b
 			begin = mid + 1;
 		else
 			end = mid - 1;
-		
 	}
 	if (target > array.at(mid))
 		return (mid + 1);
@@ -566,19 +542,11 @@ PmergeMe::PmergeDeque::~PmergeDeque()
 
 void PmergeMe::PmergeDeque::applyMergeInsertSort(char *av[])
 {
-		try
-	{
-		this->getIntegerSequence(av);	
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	//check for vec size if it's one print it;
+	this->getIntegerSequence(av);
+
 	if (this->deque.size() == 1)
 	{
-		// insert into the main chain
+		this->mainChain.push_back(this->deque.front());
 	}
 	else
 	{
@@ -587,17 +555,5 @@ void PmergeMe::PmergeDeque::applyMergeInsertSort(char *av[])
 		this->mergeSort(this->dequePair, 0, this->dequePair.size() - 1);
 		this->createMainChainAndPend();
 		this->insertToMainChain();
-		// printDeque(this->mainChain);
-		std::sort(this->deque.begin(), this->deque.end());
 	}
-	for (size_t i = 0; i < this->deque.size(); i++)
-	{
-		if (this->deque[i] != this->mainChain.at(i))
-			{
-				std::cout << this->deque[i] << " - " << this->mainChain.at(i) << std::endl;
-				std::cout << "Not sorted\n";
-				return;
-			}
-	}
-	std::cout << "sorted\n";
 }

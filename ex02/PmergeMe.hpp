@@ -21,6 +21,7 @@ public:
 	~PmergeMe();
 
 	class PmergeVector{
+
 		private:
 		std::vector<int> vec;
 		std::vector<int> positions;
@@ -57,10 +58,13 @@ public:
 			PmergeVector();
 			~PmergeVector();
 			void applyMergeInsertSort(char *av[]);
+			void printBefore();
+			void printAfter();
 
 	};
 
 	class PmergeDeque{
+
 		private:
 			std::deque<int> deque;
 			std::deque<int> positions;
@@ -91,7 +95,7 @@ public:
 
 			//insert to main chain
 			void insertToMainChain();
-
+			
 		public:
 		 	PmergeDeque();
 		 	~PmergeDeque();
